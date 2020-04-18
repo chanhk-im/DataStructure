@@ -12,6 +12,16 @@ typedef struct
     int full;
 } queue;
 
+typedef struct _task
+{
+    int x;
+    int y;
+    int m;
+} Task;
+
+int is_full(queue *que);
+int is_empty(queue *que);
+
 queue *
 create_queue(int capacity, int unit)
 {
@@ -88,23 +98,76 @@ int visited[20][20];
 
 int main()
 {
-    /*  FILE  */
-    FILE *f = fopen("test.txt", "r");
-    if (f == NULL)
-        return 1;
-    /*  FILE  */
     int h, w;
     int i_cnt = 0;
+    int area_cnt = 0, max_area = 0, min_area = 400;
+
+    int d[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     scanf("%d %d", &w, &h);
 
     for (int i = 0; i < h; i++)
     {
         for (int j = 0; j < w; j++)
-            fscanf(f, "%d", &land[i][j]);
+            scanf("%d", &land[i][j]);
     }
 
-    
+    queue *tasks = create_queue(h * w, sizeof(Task));
 
-    fclose(f);
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            if (visited[i][j])
+                continue;
+
+            visited[i][j] = 1;
+            if (land[i][j])
+            {
+                Task task_init;
+                task_init.x = j;
+                task_init.y = i;
+                task_init.m = 0;
+                enqueue(tasks, &task_init);
+
+                area_cnt = 0;
+                while (!is_empty(tasks))
+                {
+                    Task curr;
+                    dequeue(tasks, &curr);
+                    area_cnt += 1;
+
+                    for (int k = 0; k < 4; k++)
+                    {
+                        Task next;
+                        next.x = curr.x + d[k][1];
+                        next.y = curr.y + d[k][0];
+
+                        if (0 <= next.x && next.x < w)
+                        {
+                            if (0 <= next.y && next.y < h)
+                            {
+                                if (!visited[next.y][next.x] && land[next.y][next.x])
+                                {
+                                    visited[next.y][next.x] = 1;
+                                    enqueue(tasks, &next);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                i_cnt += 1;
+                if (max_area < area_cnt)
+                    max_area = area_cnt;
+                
+                if (area_cnt < min_area)
+                    min_area = area_cnt;
+            }
+            
+        }
+    }
+    printf("%d %d %d\n", i_cnt, min_area, max_area);
+    delete_queue(tasks);
+    return 0;
 }
