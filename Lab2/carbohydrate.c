@@ -123,9 +123,6 @@ int main()
 
     for (int i = 0; i < strlen(formula) + 1; i++)
     {
-        print_stack(st);
-        printf("> %c\n", formula[i]);
-
         if (isdigit(formula[i]))
         {
             if (is_empty(st))
@@ -208,7 +205,7 @@ int main()
                         push(st, &top);
 
                     push(st, &res);
-                } while (top.type != OPEN);
+                } while (top.type != OPEN); 
                 
             }
             else if (formula[i] == 'C')
