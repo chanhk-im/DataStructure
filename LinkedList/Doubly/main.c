@@ -22,11 +22,11 @@ int main()
     data = 4;
     linkedlist_insert_first(l, &data);
 
-    if (!linkedlist_get(l, 1, &data))
-        return 1;
+    linkedlist_remove_last(l, &data);
     printf("%d\n", data);
 
-    linkedlist_remove_last(l, &data);
+    linkedlist_get(l, 2, &data);
+    printf("%d\n", data);
 
     while (linkedlist_length(l) > 0)
     {

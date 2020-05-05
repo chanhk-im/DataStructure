@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "linkedlist.h"
 
 linkedlist_t *
@@ -58,10 +59,65 @@ void linkedlist_insert(node_t *left, void *e, int unit)
     new_node->right = right;
 
     left->right = new_node;
-    right->left - new_node;
+    right->left = new_node;
 }
 
 void linkedlist_insert_first(linkedlist_t *l, void *e)
 {
-    linkedlist_insert(0, e, *((int *)l->element));
+    linkedlist_insert(l, e, *((int *)l->element));
+}
+
+void linkedlist_insert_last(linkedlist_t *l, void *e)
+{
+    node_t *curr = l->right;
+
+    while (curr->right != l)
+        curr = curr->right;
+    
+    linkedlist_insert(curr, e, *((int *)l->element));
+}
+
+int linkedlist_remove(linkedlist_t *l, node_t *n)
+{
+    if (linkedlist_length(l) < 1)
+        return 1;
+
+    n->left->right = n->right;
+    n->right->left = n->left;
+
+    free(n->element);
+    free(n);
+    return 0;
+}
+
+int linkedlist_remove_first(linkedlist_t *l, void *e)
+{
+    memcpy(e, l->right->element, *((int *)l->element));
+    return linkedlist_remove(l, l->right);
+}
+
+int linkedlist_remove_last(linkedlist_t *l, void *e)
+{
+    if (linkedlist_length(l) < 1)
+        return 1;
+
+    node_t *curr = l->right;
+
+    while (curr->right != l)
+        curr = curr->right;
+    memcpy(e, curr->element, *((int *)l->element));
+    return linkedlist_remove(l, curr);
+}
+
+int linkedlist_get(linkedlist_t *l, int pos, void *e)
+{
+    if (linkedlist_length(l) < pos)
+        return 1;
+
+    node_t *curr = l->right;
+    for (int i = 0; i < pos; i++)
+        curr = curr->right;
+    
+    memcpy(e, curr->element, *((int *)l->element));
+    return 0;
 }
