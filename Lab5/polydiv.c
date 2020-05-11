@@ -206,11 +206,11 @@ polynomial_create (char * s)
 
     polynomial *p = linkedlist_alloc(sizeof(term_t));
 
-    for (int i = 0; i < strlen(s); i++)
+    for (int i = 0; i < strlen(s) + 1; i++)
     {
         if (s[i] == '^')
         {
-            coef = atoi(&s[i + 1]);
+            expo = atoi(&s[i + 1]);
             if (s[i + 1] =='-')
                 i += 2;
             else
@@ -219,14 +219,14 @@ polynomial_create (char * s)
         }
         else if (s[i] == '(')
         {
-            expo = atoi(&s[i + 1]);
+            coef = atoi(&s[i + 1]);
             if (s[i + 1] == '-')
                 i += 2;
             else
                 i += 1;
             expo_flag = 1;
         }
-        else if (s[i] == ' ' && coef_flag && expo_flag)
+        else if ((s[i] == ' ' || s[i] == '\0') && coef_flag && expo_flag)
         {
             term_t *new_term = (term_t *)malloc(sizeof(term_t));
             new_term->coef = coef;
@@ -236,6 +236,7 @@ polynomial_create (char * s)
             expo_flag = 0;
         }
     }
+    return p;
 }
 
 void
@@ -319,6 +320,7 @@ polynomial_subt (polynomial * p1, polynomial * p2)
         }
         else if (t2.expo > t1.expo)
         {
+            t2.coef *= -1;
             polynomial_add_term(r, &t2);
             i2 += 1;
         }
@@ -341,6 +343,7 @@ polynomial_subt (polynomial * p1, polynomial * p2)
     while (i2 < linkedlist_length(p2))
     {
         linkedlist_get(p2, i2, &t2);
+        t2.coef *= -1;
         polynomial_add_term(r, &t2);
         i2 += 1;
     }
@@ -372,7 +375,41 @@ void
 polynomial_div (polynomial * dividend, polynomial * divisor, 
 			    polynomial ** quotient, polynomial ** remainder)
 {
-	/* TODO */
+    /* TODO */
+    *quotient = polynomial_alloc();
+    *remainder = linkedlist_clone(dividend);
+
+    int div_expo, re_expo;
+    int div_coef, re_coef;
+    term_t tr;
+
+    linkedlist_get(divisor, 0, &tr);
+    div_expo = tr.expo;
+    div_coef = tr.coef;
+    linkedlist_get(*remainder, 0, &tr);
+    re_expo = tr.expo;
+    re_coef = tr.coef;
+
+    while (div_expo <= re_expo)
+    {
+        polynomial *p = linkedlist_clone(divisor);
+        polynomial *m = polynomial_alloc();
+
+        tr.coef = re_coef / div_coef;
+        tr.expo = re_expo - div_expo;
+        polynomial_add_term(m, &tr);
+        p = polynomial_mult(p, m);
+
+        *remainder = polynomial_subt(*remainder, p);
+        polynomial_add_term(*quotient, &tr);
+
+        linkedlist_get(divisor, 0, &tr);
+        div_expo = tr.expo;
+        div_coef = tr.coef;
+        linkedlist_get(*remainder, 0, &tr);
+        re_expo = tr.expo;
+        re_coef = tr.coef;
+    }
 }
 
 /* Main */
@@ -394,13 +431,13 @@ main ()
 
 	scanf("%255[^\n]", buf) ;
 	scanf("%c", &newline) ;
-	divisor = polynomial_create(buf) ;
+    divisor = polynomial_create(buf) ;
 
-	polynomial_div(dividend, divisor, &quotient, &remainder) ;
+    polynomial_div(dividend, divisor, &quotient, &remainder) ;
 	polynomial_print(quotient) ;
 	polynomial_print(remainder) ;
 
-	linkedlist_free(dividend) ;
+    linkedlist_free(dividend) ;
 	linkedlist_free(divisor) ;
 	linkedlist_free(quotient) ;
 	linkedlist_free(remainder) ;
