@@ -24,5 +24,14 @@ HGU ECE20010-04 데이타구조 수업 자습
    * `int ListLength(LinkedList l)` l의 길이 반환
    * `int ListPop(LinkedList *l, int *e)` 맨 앞의 Node 삭제
    * `int ListRemove(LinkedList l, int e)` e를 element로 가지는 Node 삭제
-
-1. Ver.2
+  
+2. Ver.3, Ver.4, Doubly
+   * `linkedlist_t *linkedlist_alloc(int unit)` linkedlist를 동적할당하고 그것을 리턴
+   * `void linkedlist_free(linkedlist_t *l)` linkedlist 삭제
+   * `int linkedlist_length(linkedlist_t *l)` linkedlist의 길이 반환
+   * `void linkedlist_insert_first(linkedlist_t *l, void *e)` linkedlist의 맨 앞에 원소 추가
+   * `void linkedlist_insert_last(linkedlist_t *l, void *e)` linkedlist의 맨 뒤에 원소 추가
+   * `int linkedlist_remove(linkedlist_t *l, node_t *n)` linkedlist에서 n 삭제
+   * `int linkedlist_remove_first(linkedlist_t *l, void *e)` linkedlist의 맨 앞 원소 삭제
+   * `int linkedlist_remove_last(linkedlist_t *l, void *e)` linkedlist의 맨 뒤 원소 삭제
+   * `int linkedlist_get(linkedlist_t *l, int pos, void *e)` linkedlist에서 pos번째 원소 가져옴
