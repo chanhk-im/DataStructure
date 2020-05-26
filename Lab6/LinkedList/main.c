@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arraylist.h"
+#include "linkedlist.h"
 
 void
 free_string (void * p)
@@ -36,12 +36,11 @@ print_string (void * p)
 	printf("%s\n", s) ;
 }
 
-
 int 
 main () 
 {
-	arraylist_t * l ; 
-	l = arraylist_alloc(sizeof(char *)) ;
+	linkedlist_t * l ; 
+	l = linkedlist_alloc(sizeof(char *)) ;
 
 	FILE * fp = fopen("wordset.txt", "r") ;
 	if (fp == 0x0) {
@@ -61,13 +60,20 @@ main ()
 		if (i != 0) {
 			s[i] = 0x0 ;
 			char * str = strdup(s) ;
-			arraylist_insert_last(l, &str) ;
+			linkedlist_insert_last(l, &str) ;
 		}
 	}
 	fclose(fp) ;
 
-	//arraylist_sort(l, cmp_string) ;
-	arraylist_qsort(l, cmp_string) ;
-	arraylist_print(l, print_string) ;
-	arraylist_free(l, free_string) ;
+	linkedlist_qsort(l, cmp_string) ;
+	//linkedlist_sort(l, cmp_string) ;
+
+	int n ; 
+	char * s ;
+	scanf("%d", &n) ;
+	linkedlist_get(l, n, &s) ;
+	printf("%s\n", s) ;
+
+	//linkedlist_print(l, print_string) ;
+	linkedlist_free(l, free_string) ;
 }
