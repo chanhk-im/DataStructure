@@ -43,7 +43,7 @@ main ()
 	arraylist_t * l ; 
 	l = arraylist_alloc(sizeof(char *)) ;
 
-	FILE * fp = fopen("wordset.txt", "r") ;
+	FILE * fp = fopen("wordset2.txt", "r") ;
 	if (fp == 0x0) {
 		perror("failed to open wordset.txt") ;
 		exit(1) ;

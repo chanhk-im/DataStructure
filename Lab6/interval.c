@@ -1,7 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arraylist.h"
+
+struct arraylist {
+	int capacity ;
+	int length ;
+	int unit ;
+	void * elements ;
+} ;
+
+typedef enum {c, o} inter_m;
+
+typedef struct
+{
+    double e;
+    inter_m m;
+} inter_t;
+
+typedef struct arraylist arraylist_t ;
+
+arraylist_t * 
+arraylist_alloc (int unit)  ;
+
+void
+arraylist_free (arraylist_t * l, void (* free_element)(void * e)) ;
+
+int 
+arraylist_length (arraylist_t * l) ;
+
+void
+arraylist_print (arraylist_t * l, void (* print_element)(void * e)) ;
+
+void
+arraylist_insert_first (arraylist_t * l, void * e) ;
+
+void
+arraylist_insert_last (arraylist_t * l, void * e) ;
+
+int 
+arraylist_remove_first (arraylist_t * l, void * e) ;
+
+int 
+arraylist_remove_last (arraylist_t * l, void * e) ;
+
+int
+arraylist_get (arraylist_t * l, int pos, void * e) ;
+
+void
+arraylist_sort (arraylist_t * l, int (* cmp_elements)(void * e1, void * e2)) ;
+
+void
+arraylist_qsort (arraylist_t * l, int (* cmp_elements)(void * e1, void * e2)) ;
+
+/*  arraylist.c  */
 
 arraylist_t * 
 arraylist_alloc (int unit) 
@@ -168,4 +219,77 @@ void
 arraylist_qsort (arraylist_t * l, int (* cmp_elements)(void * e1, void * e2))
 {
 	_arraylist_qsort(l, cmp_elements, l->elements, l->elements + l->length * l->unit) ;
+}
+
+/* interval */
+
+
+
+void free_interval(void *e)
+{
+    return;
+}
+
+int cmp_intervals(void *e1, void *e2)
+{
+    inter_t *t1 = (inter_t *)e1;
+    inter_t *t2 = (inter_t *)e2;
+
+    if (t1->e == t2->e)
+    {
+        if (t1->m < t2->m) 
+            return 1;
+        if (t1->m == t2->m) 
+            return 0;
+        return -1;
+    }
+    if (t1->e > t2->e) return 1;
+    return -1;
+}
+
+int count_interval(arraylist_t *l)
+{
+    inter_t *t = (inter_t *)malloc(sizeof(inter_t));
+    int cnt = 0, max = 0;
+
+    for (int i = 0; i < arraylist_length(l); i++)
+    {
+        arraylist_get(l, i, t);
+        if (t->m == c)
+            cnt += 1;
+        else if (t->m == o)
+            cnt -= 1;
+        
+        if (cnt > max)
+            max = cnt;
+    }
+
+    free(t);
+    return max;
+}
+
+int main()
+{
+    int n;
+    arraylist_t *intervals = arraylist_alloc(sizeof(inter_t));
+    inter_t *t1 = (inter_t *)malloc(sizeof(inter_t));
+    inter_t *t2 = (inter_t *)malloc(sizeof(inter_t));
+
+    t1->m = c;
+    t2->m = o;
+
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) 
+    {
+        scanf("%lf %lf", &(t1->e), &(t2->e));
+        arraylist_insert_last(intervals, t1);
+        arraylist_insert_last(intervals, t2);
+    }
+
+    arraylist_sort(intervals, cmp_intervals);
+    printf("%d\n", count_interval(intervals));
+
+    arraylist_free(intervals, free_interval);
+    free(t1);
+    free(t2);
 }

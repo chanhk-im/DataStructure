@@ -4,7 +4,7 @@ HGU ECE20010-04 데이타구조 수업 자습
 
 ## 1. 데이터 구조 수업 관련 사이트
 1. https://piazza.com/class/k7aho8gvmbc22e
-1. https://github.com/hongshin/DataStructure/wiki
+2. https://github.com/hongshin/DataStructure
 
 ## 2. 리스트(List)
 
