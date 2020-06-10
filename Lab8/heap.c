@@ -1,7 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "heap.h"
+
+typedef struct {
+	char * arr ;
+	int capacity ;
+	int size ;
+	size_t usize ;
+
+	int (* cmp)(void *e1, void *e2) ;
+
+} heap_t ;
+
+heap_t *
+heap_create (int capacity, size_t usize, int (* cmp)(void *e1, void *e2)) ;
+
+void
+heap_free (heap_t * heap) ;
+
+int
+heap_size (heap_t * heap) ;
+
+int
+heap_top (heap_t * heap, void * buf) ;
+
+int
+heap_pop (heap_t * heap, void * buf) ;
+
+int
+heap_push (heap_t * heap, void * buf) ;
 
 heap_t *
 heap_create (int capacity, size_t usize, int (* cmp)(void *e1, void *e2)) 
@@ -113,5 +140,40 @@ heap_push (heap_t * h, void * buf)
 			break ;
 		}
 	}
+	return 0 ;
+}
+
+int 
+string_cmp (void *e1, void *e2)
+{
+	char *s1 = *((char **)e1) ;
+	char *s2 = *((char **)e2);
+	return strcmp(s1, s2) ;
+}
+
+int 
+main ()
+{
+	char *buf[1030];
+	int n;
+	int i ;
+
+	scanf("%d", &n);
+	heap_t * h = heap_create(n, sizeof(char *), string_cmp) ;
+
+	for (i = 0 ; i < n ; i++) {
+		buf[i] = (char *)malloc(sizeof(char) * 260);
+		scanf("%s", buf[i]);
+		heap_push(h, &buf[i]) ;
+		char * s ;
+		heap_top(h, &s) ;
+	}
+
+	while (heap_size(h) > 0) {
+		char * s = 0x0 ;
+		heap_pop(h, &s) ;
+		printf("%s\n", s) ;
+	}
+
 	return 0 ;
 }
